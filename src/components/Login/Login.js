@@ -17,9 +17,20 @@ const Login = (props) => {
   in response to a keystroke in the email or password field
   */
   useEffect(() => {
-    setFormIsValid(
-      enteredEmail.includes("@") && enteredPassword.trim().length > 6
-    );
+    const identifier = setTimeout(() => {
+      console.log("Checking form validity!");
+      setFormIsValid(
+        enteredEmail.includes("@") && enteredPassword.trim().length > 6
+      );
+    }, 500);
+
+    /* Clean up function, this will run as a clean up process before useEffect executes this function next time
+    it runs before every new side effect function execution
+    */
+    return () => {
+      console.log("Clean Up");
+      clearTimeout(identifier);
+    };
   }, [enteredEmail, enteredPassword]);
 
   const emailChangeHandler = (event) => {
