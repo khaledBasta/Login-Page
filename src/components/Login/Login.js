@@ -3,7 +3,6 @@ import React, { useState, useEffect, useReducer } from "react";
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
-import { act } from "react-dom/test-utils";
 
 /**
  * All the data which will be required & used inside of the reducer function
@@ -31,6 +30,7 @@ const passwordReducer = (state, action) => {
   }
   return { value: "", isValid: false };
 };
+
 const Login = (props) => {
   // const [enteredEmail, setEnteredEmail] = useState("");
   // const [emailIsValid, setEmailIsValid] = useState();
@@ -46,27 +46,30 @@ const Login = (props) => {
     value: "",
     isValid: null,
   });
+
+  // Could also use object destructuring to pass specific properties to useEffect() as dependecies instead of the entire object
+  // const { isValid: emailIsValid } = emailState;
+  // const { isValid: passwordIsValid } = passwordState;
+
   /* 
   Side effect of the user entering data.
   Trigger an action in response to that changing keystrokes, so checking & updating that form validity
   in response to a keystroke in the email or password field
   */
-  // useEffect(() => {
-  //   const identifier = setTimeout(() => {
-  //     console.log("Checking form validity!");
-  //     setFormIsValid(
-  //       enteredEmail.includes("@") && enteredPassword.trim().length > 6
-  //     );
-  //   }, 500);
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log("Checking form validity!");
+      setFormIsValid(emailState.isValid && passwordState.isValid);
+    }, 500);
 
-  //   /* Clean up function, this will run as a clean up process before useEffect executes this function next time
-  //   it runs before every new side effect function execution
-  //   */
-  //   return () => {
-  //     console.log("Clean Up");
-  //     clearTimeout(identifier);
-  //   };
-  // }, [enteredEmail, enteredPassword]);
+    /* Clean up function, this will run as a clean up process before useEffect executes this function next time
+    it runs before every new side effect function execution
+    */
+    return () => {
+      console.log("Clean Up");
+      clearTimeout(identifier);
+    };
+  }, [emailState.isValid, passwordState.isValid]);
 
   const emailChangeHandler = (event) => {
     // setEnteredEmail(event.target.value);
@@ -74,7 +77,7 @@ const Login = (props) => {
     // action user input
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
 
-    setFormIsValid(event.target.value.includes("@") && passwordState.isValid);
+    // setFormIsValid(event.target.value.includes("@") && passwordState.isValid);
   };
 
   const passwordChangeHandler = (event) => {
@@ -83,7 +86,7 @@ const Login = (props) => {
     // Action user password
     dispatchPassword({ type: "USER_PASSWORD", val: event.target.value });
 
-    setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
+    // setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
   };
 
   const validateEmailHandler = () => {
@@ -96,6 +99,7 @@ const Login = (props) => {
   const validatePasswordHandler = () => {
     // setPasswordIsValid(enteredPassword.trim().length > 6);
 
+    // action password blur
     dispatchPassword({ type: "PASSWORD_BLUR" });
   };
 
